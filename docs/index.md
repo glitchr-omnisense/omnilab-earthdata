@@ -20,7 +20,7 @@ With the Symfony bundle, the factory is registered as `earthdata` when the bundl
 otherwise register `EarthdataSourceFactory` as a service (it is autoconfigured as a
 `SourceFactoryInterface`).
 
-## Which API: the CMR's search, not its STAC
+## Which API: the CMR's search, and its STAC by configuration
 
 NASA's Common Metadata Repository answers in two ways, both open:
 
@@ -31,18 +31,21 @@ NASA's Common Metadata Repository answers in two ways, both open:
   2,000 a page at most;
 - its **STAC API** (`https://cmr.earthdata.nasa.gov/stac/{provider}/search`), a STAC API over the
   same metadata - the shape `omnilab/copernicus` reads, items whose assets are named like here
-  (`B04`, `s3_B04`...).
+  (`B04`, with an `s3_B04` twin).
 
-The search API is read here. Compared on 2026-10-15 with the same question (the HLS S30 granules
-over Strasbourg's box, 2026-10-01 to 10-14): the STAC needs the archive in its path (`LPCLOUD`),
-so a search across archives is one call per archive; it answered in 2.7 s where the search API
-took about 0.1 s (its own `CMR-Took`); asked for a cloud cover of 30 % at most through its query
-extension (`{"eo:cloud_cover":{"lte":30}}`), it still matched the six granules of the period, in
-10.7 s, where the search API's `cloud_cover=0,30` gives the two that are under it; both count the
-matches (`context.matched`, `CMR-Hits`). What the STAC would have shared with
-`omnilab/copernicus` is the reading of a STAC item into a `Product`, which is private to
-`CopernicusSource`: with a STAC reader in the core, the CMR's STAC would be a configuration of it
-- a need written down for the core, not worked around here.
+The search API is read by default. The STAC is read when the option `stac` names an archive
+(`stac: LPCLOUD`), through the core's STAC reader (`Omnilab\Source\Stac`, shared with
+omnilab/copernicus): `collections`, `intersects` or `bbox`, `datetime`, `limit` (50 at most),
+`sortby=-datetime` (or `datetime`), the cloud cover by its Query extension
+(`query[eo:cloud_cover][lte]=30`), the next page by the next link's `cursor`, the total from
+`context.matched`; each `s3_` asset folded into its twin as its `s3` alternate. Compared on
+2026-10-15 with the same question (the HLS S30 granules over Strasbourg, 2026-10-01 to 10-14, at
+most 30 % cloud): both answer the same two granules; the STAC needs the archive in its path, so a
+search across archives is one call per archive; it knows entry ids only (a concept id matches
+nothing: refused), refuses a box across the antimeridian (400: refused before the call), and was
+slower - 4 to 16.6 s against 3.5 to 6.5 s, three times each -, answering 502 to a page of 100 or
+250 (50 answered) and once a 500 to a page of 10. A cloud filter written as a JSON object in a GET
+(`query={"eo:cloud_cover":...}`) is ignored; in the bracketed form, or in a POST body, it narrows.
 
 ## Calls
 
@@ -108,8 +111,8 @@ each); the MOD09GA granules of 2026-10-01 in a box across the antimeridian (13, 
 collections found by "HLSS30" (four: HLSL30 and HLSS30 v2.0 with their DOIs, the vegetation
 indices); a collection the CMR does not have (no hits); its 400 for a period that ends before it
 starts; a protected file without a token (302 to the login page) and an open browse image (200);
-the CMR's STAC for the HLS S30 question (six granules in 2.7 s; six again with its query
-extension's cloud cover at 30 % at most, in 10.7 s, where the search API gives two).
+the CMR's STAC for the HLS S30 question (six granules in 2.7 s without a cloud filter; with the
+`stac` option, two under 30 %, one a page, the second page by the cursor, as the search API's).
 
 **Not verified live (needs a token)**: `open()` with an Earthdata Login token, and the CMR's
 answers to an authenticated search (no account was used); the test feeds a token and checks it

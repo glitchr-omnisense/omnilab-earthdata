@@ -13,6 +13,7 @@ use Omnilab\Source\HttpSource;
 use Omnilab\Source\Page;
 use Omnilab\Source\ProductQuery;
 use Omnilab\Source\Query;
+use Omnilab\Source\Stac;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\ResponseInterface;
@@ -39,9 +40,13 @@ final class EarthdataSource extends HttpSource
     /** The most granules or collections the CMR answers a page. */
     public const MAX_PER_PAGE = 2000;
 
+    /** The most items asked of the CMR's STAC a page: 50 answered (12.7 s for a year of HLS over Strasbourg), 100 and 250 a 502 each time on 2026-10-15. */
+    public const STAC_PER_PAGE = 50;
+
     /**
      * @param list<string> $collections what a query that names none searches
      * @param string|null  $token       an Earthdata Login token, sent with open() (and to the CMR, which then shows the account's restricted metadata)
+     * @param string|null  $stac        an archive's id (LPCLOUD...): its granules read through the CMR's STAC catalogue, by the core's STAC reader, rather than the CMR's own search
      */
     public function __construct(
         HttpClientInterface $http,
@@ -50,6 +55,7 @@ final class EarthdataSource extends HttpSource
         string $baseUri = self::BASE_URI,
         array $headers = [],
         float $throttle = 0.0,
+        private readonly ?string $stac = null,
     ) {
         parent::__construct($http, $baseUri, $headers + (null !== $token && '' !== $token ? ['Authorization' => 'Bearer '.$token] : []), $throttle);
     }
@@ -78,6 +84,9 @@ final class EarthdataSource extends HttpSource
         }
         $concepts = array_values(array_filter($collections, static fn (string $c) => (bool) preg_match('~^C\d+-[A-Z0-9_]+$~', $c)));
         $entries = array_values(array_diff($collections, $concepts));
+        if (null !== $this->stac) {
+            return $this->stacProducts($query, $entries, $concepts);
+        }
         $answer = $this->getJsonWithHeaders('granules.umm_json', [
             'collection_concept_id[]' => $concepts ?: null,
             'entry_id[]' => $entries ?: null,
@@ -96,6 +105,33 @@ final class EarthdataSource extends HttpSource
         $after = $headers['cmr-search-after'][0] ?? null;
 
         return new Page($products, $products && null !== $after && \count($products) >= max(1, min(self::MAX_PER_PAGE, $query->limit)) ? $after : null, $hits);
+    }
+
+    /**
+     * The granules through the CMR's STAC catalogue of one archive
+     * (cmr.earthdata.nasa.gov/stac/{archive}/search), read by the core's
+     * STAC reader: the cloud cover by the Query extension, paging by the
+     * next link's cursor, the total from its context. It knows entry ids
+     * alone, one archive at a time, and no box across the antimeridian:
+     * refused before any call.
+     *
+     * @param list<string> $entries
+     * @param list<string> $concepts
+     *
+     * @return Page<Product>
+     */
+    private function stacProducts(ProductQuery $query, array $entries, array $concepts): Page
+    {
+        if ($concepts) {
+            throw NotSupportedException::operation('earthdata', \sprintf('find %s in a STAC catalogue (it knows entry ids: HLSS30_2.0)', implode(', ', $concepts)));
+        }
+        if ($query->place instanceof BBox && $query->place->west > $query->place->east) {
+            throw NotSupportedException::operation('earthdata', 'search a box across the antimeridian in a STAC catalogue (the CMR\'s own search does)');
+        }
+        $root = (string) preg_replace('~search/?$~', 'stac/', rtrim($this->baseUri, '/').'/');
+        $data = $this->getJson($root.rawurlencode((string) $this->stac).'/search', Stac::parameters($query, $entries, self::STAC_PER_PAGE, Stac::QUERY) + ['cursor' => $query->cursor]) ?? [];
+
+        return Stac::page($data, 'earthdata', 'cursor', max(1, min(self::STAC_PER_PAGE, $query->limit)));
     }
 
     /**

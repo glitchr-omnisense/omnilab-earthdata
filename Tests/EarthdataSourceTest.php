@@ -29,7 +29,10 @@ use Symfony\Component\HttpClient\Response\MockResponse;
  * 25 S to 10 S: thirteen); the collections found by "HLSS30" (three of
  * four, cut to the fields read); a collection the CMR does not have (no
  * hits); the 400 of a period that ends before it starts. The answers'
- * CMR-Hits and CMR-Search-After headers are given back as recorded.
+ * CMR-Hits and CMR-Search-After headers are given back as recorded. From
+ * cmr.earthdata.nasa.gov/stac/LPCLOUD that evening: the HLSS30 granules
+ * over Strasbourg from 10-01 to 10-14 under 30 % cloud, one a page, the
+ * first page and the second by its next link's cursor (two in all).
  */
 final class EarthdataSourceTest extends TestCase
 {
@@ -47,6 +50,7 @@ final class EarthdataSourceTest extends TestCase
                 return $response;
             }
             [$fixture, $hits, $after] = match (true) {
+                str_contains($url, '/stac/LPCLOUD/search') => [str_contains($url, 'cursor=') ? 'stac-hls-page2.json' : 'stac-hls-page1.json', null, null],
                 str_contains($url, 'collections.umm_json') => ['collections-hlss30.json', 4, '[0.6,0.0,6000.0,1792048940832,"2 - geophys. variables, sensor coordinates","HLSL30_VI","2.0",3246892554,42]'],
                 str_contains($url, 'NOPE_1') => ['unknown.json', 0, null],
                 str_contains($url, 'bounding_box') => ['modis-antimeridian.json', 13, '[1790812800000,4343305885]'],
@@ -55,7 +59,7 @@ final class EarthdataSourceTest extends TestCase
                 default => ['hls-page1.json', 4, self::AFTER],
             };
 
-            return new MockResponse((string) file_get_contents(__DIR__.'/Fixtures/'.$fixture), ['response_headers' => array_filter(['CMR-Hits: '.$hits, null === $after ? null : 'CMR-Search-After: '.$after])]);
+            return new MockResponse((string) file_get_contents(__DIR__.'/Fixtures/'.$fixture), ['response_headers' => array_filter([null === $hits ? null : 'CMR-Hits: '.$hits, null === $after ? null : 'CMR-Search-After: '.$after])]);
         });
         $source = (new EarthdataSourceFactory($http))->create($options);
         self::assertInstanceOf(EarthdataSource::class, $source);
@@ -163,6 +167,37 @@ final class EarthdataSourceTest extends TestCase
         self::assertSame(200, $response->getStatusCode());
         self::assertSame($file->href, $this->calls[2][0]);
         self::assertSame(['Authorization: Bearer a-token'], $this->calls[2][2]);
+    }
+
+    public function testTheCmrsStacCatalogueThroughTheCoresReader(): void
+    {
+        $source = $this->source(['stac' => 'LPCLOUD']);
+        $query = new ProductQuery(['HLSS30_2.0'], new Point(48.5734, 7.7521), new \DateTimeImmutable('2026-10-01T00:00:00Z'), new \DateTimeImmutable('2026-10-14T23:59:59Z'), maxCloudCover: 30, limit: 1);
+        $first = $source->products($query);
+
+        self::assertSame('https://cmr.earthdata.nasa.gov/stac/LPCLOUD/search?collections=HLSS30_2.0&intersects={"type":"Point","coordinates":[7.7521,48.5734]}&datetime=2026-10-01T00:00:00Z/2026-10-14T23:59:59Z&limit=1&sortby=-datetime&query[eo:cloud_cover][lte]=30', $this->calls[0][0]);
+        self::assertSame([2, 'eyJqc29uIjoiWzE3OTExOTY2NTUzNTcsNDM0NTkzNjc0MF0iLCJ1bW0iOiJbMTc5MTE5NjY1NTM1Nyw0MzQ1OTM2NzQwXSJ9'], [$first->total, $first->next]);
+        $granule = $first->first();
+        self::assertSame(['HLS.S30.T32ULU.2026278T102859.v2.0', 'HLSS30_2.0', 'earthdata', 12.0], [$granule->id, $granule->collection, $granule->source, $granule->cloudCover()]);
+        self::assertStringStartsWith('https://data.lpdaac.earthdatacloud.nasa.gov/', $granule->asset('B04')->href);
+        self::assertStringStartsWith('s3://lp-prod-protected/', $granule->asset('B04')->alternates['s3'], 'the s3_ twin folded in');
+        self::assertArrayNotHasKey('s3_B04', $granule->assets);
+
+        $second = $source->products($query->with(['cursor' => $first->next]));
+        self::assertStringEndsWith('&cursor='.$first->next, $this->calls[1][0]);
+        self::assertSame(['HLS.S30.T32UMU.2026278T102859.v2.0', 23.0], [$second->first()?->id, $second->first()?->cloudCover()]);
+
+        foreach ([
+            static fn () => $source->products(new ProductQuery(['C2021957295-LPCLOUD'])),
+            static fn () => $source->products(new ProductQuery(['MOD09GA_061'], new BBox(170, -25, -170, -10))),
+        ] as $refusal) {
+            try {
+                $refusal();
+                self::fail('refused');
+            } catch (NotSupportedException) {
+            }
+        }
+        self::assertCount(2, $this->calls);
     }
 
     public function testRefusedBeforeAnyCall(): void

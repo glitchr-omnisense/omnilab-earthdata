@@ -57,7 +57,7 @@ Information Policy); cite each collection by its DOI. The CMR publishes no rate 
 the source names itself in each call (`Client-Id: omnilab`, a header the CMR takes, and the
 User-Agent with the `mailto` address).
 
-See [docs/](docs/index.md) for the calls, the mapping, the comparison with the CMR's STAC, and
+See [docs/](docs/index.md) for the calls, the mapping, the CMR's STAC (option `stac: LPCLOUD`: the same granules through the core's STAC reader, one archive at a time, slower), and
 what was verified.
 
 License: MIT.

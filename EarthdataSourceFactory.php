@@ -16,6 +16,7 @@ use Symfony\Component\HttpClient\HttpClient;
  *     collections: []                  # what a query that names none searches: entry ids (HLSS30_2.0) or concept ids
  *     token: ~                         # an Earthdata Login token (urs.earthdata.nasa.gov, a free account), for open(): downloading the files
  *     mailto: 'support@glitchr.io'     # in the User-Agent
+ *     stac: ~                          # an archive's id (LPCLOUD, POCLOUD...): read its granules through the CMR's STAC catalogue rather than the CMR's own search (the default, faster, every archive at once)
  *     throttle: 0                      # seconds between two calls
  *     base_uri: 'https://cmr.earthdata.nasa.gov/search/'   # or the UAT's: https://cmr.uat.earthdata.nasa.gov/search/
  */
@@ -28,6 +29,7 @@ final class EarthdataSourceFactory extends SourceFactory
             'omnilab.required_options' => [],
             'collections' => [],
             'token' => null,
+            'stac' => null,
             'throttle' => 0.0,
             'base_uri' => EarthdataSource::BASE_URI,
         ]);
@@ -42,6 +44,7 @@ final class EarthdataSourceFactory extends SourceFactory
             (string) $c->get('base_uri', EarthdataSource::BASE_URI),
             ['User-Agent' => self::userAgent($c), 'Client-Id' => 'omnilab'],
             (float) $c->get('throttle'),
+            null === $c->get('stac') || '' === $c->get('stac') ? null : (string) $c->get('stac'),
         );
     }
 }
