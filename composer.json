@@ -1,0 +1,47 @@
+{
+    "name": "omnilab/earthdata",
+    "type": "library",
+    "description": "Omnilab Earthdata: NASA's Common Metadata Repository (CMR) - the granules of NASA's Earth observation collections (HLS, MODIS, VIIRS, GPM, SMAP, ICESat-2, OPERA...) as products by collection, point or box, period and cloud cover, page by page, with their footprints, attributes, browse images and files (https at the archive, s3 in AWS); the collections searched by text; open without an account, the files downloaded with an Earthdata Login token (an option).",
+    "keywords": [
+        "science",
+        "earth-observation",
+        "satellite",
+        "nasa",
+        "earthdata",
+        "cmr",
+        "modis",
+        "hls",
+        "omnilab"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marco Meyer",
+            "email": "marco.meyer@glitchr.io"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "glitchr/omnilab": "^1.0@dev",
+        "symfony/http-client": "^6.4|^7.0|^8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Omnilab\\Earthdata\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Omnilab\\Earthdata\\Tests\\": "Tests/"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    }
+}
