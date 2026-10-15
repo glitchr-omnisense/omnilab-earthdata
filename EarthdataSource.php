@@ -67,7 +67,7 @@ final class EarthdataSource extends HttpSource
 
     public function capabilities(): array
     {
-        return [Capability::PRODUCTS, Capability::AREA, Capability::CLOUD_COVER];
+        return [Capability::PRODUCTS, Capability::AREA, Capability::CLOUD_COVER, Capability::DATASETS, Capability::OPEN];
     }
 
     /**
@@ -137,9 +137,8 @@ final class EarthdataSource extends HttpSource
     /**
      * The collections that match a text (the CMR's keyword search: titles,
      * abstracts, science keywords, platforms...), the best match first, a
-     * page at a time. Outside the contract: the core's search() answers
-     * entities, and a collection is a Product (its id the entry id that
-     * products() takes).
+     * page at a time: the contract's datasets(), each collection a Product
+     * whose id is the entry id that products() takes.
      *
      * @return Page<Product>
      */
@@ -158,7 +157,7 @@ final class EarthdataSource extends HttpSource
 
     /**
      * A file of a granule (an asset, or its address), opened with the
-     * Earthdata Login token: the response, streamed, not read - the
+     * Earthdata Login token (the contract's open()): the response, streamed, not read - the
      * application reads it (getContent(), or stream()) or saves it. The
      * archive redirects to the file's store; a refusal is the archive's
      * (401, or a redirection to the login page).

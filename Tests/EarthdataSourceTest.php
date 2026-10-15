@@ -227,7 +227,7 @@ final class EarthdataSourceTest extends TestCase
         $this->source(['collections' => ['MOD09GA_061']])->products(new ProductQuery(limit: 3));
         self::assertStringContainsString('entry_id[]=MOD09GA_061', $this->calls[0][0]);
         self::assertSame('earthdata', (new EarthdataSourceFactory())->getName());
-        self::assertSame([Capability::PRODUCTS, Capability::AREA, Capability::CLOUD_COVER], $this->source()->capabilities());
+        self::assertSame([Capability::PRODUCTS, Capability::AREA, Capability::CLOUD_COVER, Capability::DATASETS, Capability::OPEN], $this->source()->capabilities());
 
         $this->source()->products(new ProductQuery(['C2021957295-LPCLOUD'], limit: 1));
         self::assertStringContainsString('collection_concept_id[]=C2021957295-LPCLOUD', $this->calls[1][0]);

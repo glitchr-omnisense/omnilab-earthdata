@@ -55,8 +55,8 @@ slower - 4 to 16.6 s against 3.5 to 6.5 s, three times each -, answering 502 to 
 | `datasets(Query)` | the collections that match a text, the CMR's relevance order; `limit`, `cursor` | `collections.umm_json?keyword=&page_size=` |
 | `open(Asset\|string)` | a file's https:// address, with the token: the response, not read | GET with `Authorization: Bearer` |
 
-`datasets()` and `open()` are outside the contract: the core's `search()` answers entities, and
-a collection is a product; the contract has no download. `Page::$total` is `CMR-Hits`; `next` is
+`datasets()` and `open()` are the contract's (`Capability::DATASETS`, `Capability::OPEN`, since
+the core named them on 2026-10-15; their signatures did not change). `Page::$total` is `CMR-Hits`; `next` is
 the answer's `CMR-Search-After` when the page is full (the CMR gives the header on a last page
 too). Refused before any call: no collection at all, `open()` without a token or on an s3://
 address; `entity()`, `search()`, `series()`, `occurrences()`.
