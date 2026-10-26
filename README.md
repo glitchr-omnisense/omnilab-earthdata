@@ -1,7 +1,7 @@
 # omnilab/earthdata
 
 NASA Earthdata's Common Metadata Repository (CMR) for
-[omniscient/omnilab](https://github.com/glitchr-studio/omnilab): the granules of NASA's Earth
+[omnisense/omnilab](https://github.com/glitchr-omnisense/omnilab): the granules of NASA's Earth
 observation collections - the Harmonized Landsat Sentinel-2 (HLS), MODIS, VIIRS, GPM, SMAP,
 ICESat-2, the OPERA products... - as products, by collection, point or box, period and cloud
 cover, page by page: their footprint, attributes, browse image and files. The collections
