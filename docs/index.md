@@ -1,5 +1,11 @@
 # omnilab/earthdata
 
+NASA Earthdata's Common Metadata Repository (`https://cmr.earthdata.nasa.gov/search/`, and its
+STAC by configuration) for [omnisense/omnilab](https://github.com/glitchr-omnisense/omnilab): the
+granules of NASA's Earth observation collections (HLS, MODIS, VIIRS, GPM...) by place, period and
+cloud cover as products, the collections by text as datasets, and their files with an Earthdata
+Login token. No account to search.
+
 ## Installation
 
 ```sh
@@ -19,6 +25,48 @@ $earthdata = (new EarthdataSourceFactory($httpClient))->create([
 With the Symfony bundle, the factory is registered as `earthdata` when the bundle knows it;
 otherwise register `EarthdataSourceFactory` as a service (it is autoconfigured as a
 `SourceFactoryInterface`).
+
+## Credentials
+
+None to search: the CMR's search and STAC APIs are open. Downloading a file (`open()`) needs an
+Earthdata Login token, from a free account at urs.earthdata.nasa.gov: give it as `token`; it is
+sent as a bearer token (and to the CMR, which then shows the account's restricted metadata).
+
+## Options
+
+The factory's options, with the defaults it applies (`EarthdataSourceFactory`):
+
+| Option | Type | Default | Required | Effect |
+|---|---|---|---|---|
+| `collections` | `list<string>` | `[]` | no | what a query that names none searches: entry ids (`HLSS30_2.0`) or concept ids; empty: such a query is refused |
+| `token` | `?string` | null | no | an Earthdata Login token, sent as a bearer token with `open()` and to the CMR; null: `open()` refused |
+| `stac` | `?string` | null | no | an archive's id (`LPCLOUD`, `POCLOUD`...): its granules read through the CMR's STAC catalogue by the core's STAC reader, rather than the CMR's own search (the default: faster, every archive at once) |
+| `mailto` | `?string` | null | no | a contact address, sent in the User-Agent |
+| `user_agent` | `?string` | null | no | the whole User-Agent, in place of the one made from `mailto` |
+| `throttle` | `float` | `0` | no | seconds left between two calls: the CMR publishes no rate for its search |
+| `base_uri` | `string` | `https://cmr.earthdata.nasa.gov/search/` | no | the CMR's search API (or the UAT's, `https://cmr.uat.earthdata.nasa.gov/search/`) |
+
+## Capabilities
+
+`capabilities()` answers `products`, `area`, `cloud_cover`, `datasets`, `open`; an operation it does not answer throws `NotSupportedException` before any call.
+
+| Capability | Supported | |
+|---|---|---|
+| `entity` | no |  |
+| `search` | no |  |
+| `series` | no |  |
+| `products` | yes | the granules of the named collections over a point or a box and a period, newest or oldest first, 2,000 a page at most (50 through STAC), the next by `CMR-Search-After` (or the STAC cursor), the total from `CMR-Hits` |
+| `occurrences` | no |  |
+| `datasets` | yes | the CMR's collections by text, the best first, with a total |
+| `jobs` | no |  |
+| `open` | yes | a granule's file over `https://` with the `token`; an `s3://` address refused (it needs AWS credentials in us-west-2) |
+| `structure` | no |  |
+| `cross_references` | no | none: the CMR gives no identifier of another base for a granule |
+| `forecast` | no |  |
+| `historical` | no |  |
+| `area` | yes | a `BBox` (across the antimeridian with the CMR's search; refused through STAC) |
+| `station` | no |  |
+| `cloud_cover` | yes | a cloud cover range (the Query extension through STAC) |
 
 ## Which API: the CMR's search, and its STAC by configuration
 
@@ -100,6 +148,71 @@ token to another host.
 Nothing to follow: granules and collections are products, and the CMR gives no identifier of
 another base for them (a collection's DOI would need a scheme the core does not have).
 
+## Example
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\Earthdata\EarthdataSourceFactory;
+use Omnilab\Exception\NotSupportedException;
+use Omnilab\Model\Point;
+use Omnilab\Source\ProductQuery;
+use Omnilab\Source\Query;
+use Symfony\Component\HttpClient\HttpClient;
+
+$earthdata = (new EarthdataSourceFactory(HttpClient::create()))->create([
+    'mailto' => 'you@example.org',
+    'token' => getenv('EARTHDATA_TOKEN') ?: null,   // an Earthdata Login token: only to download
+]);
+
+$page = $earthdata->products(new ProductQuery(['HLSS30_2.0', 'HLSL30_2.0'], new Point(48.5734, 7.7521), new DateTimeImmutable('2026-10-10'), new DateTimeImmutable('2026-10-26'), maxCloudCover: 40, limit: 3));
+printf("%d HLS granules over Strasbourg under 40 %% cloud; the first %d:\n", $page->total, count($page));
+foreach ($page as $granule) {
+    printf("  %s  %s  %s %% cloud, %d files, B04 %s\n", $granule->datetime->format('Y-m-d H:i'), $granule->id, $granule->cloudCover(), count($granule->assets), $granule->asset('B04') ? 'yes' : 'no');
+}
+
+foreach ($earthdata->datasets(new Query('sea surface temperature', limit: 2)) as $collection) {
+    echo '  collection ', $collection->id, '  ', $collection->properties['title'] ?? '', "\n";
+}
+
+try {
+    $earthdata->open($page->first()->asset('B04'));
+} catch (NotSupportedException $e) {
+    echo $e->getMessage(), "\n";
+}
+```
+
+```
+2 HLS granules over Strasbourg under 40 % cloud; the first 2:
+  2026-10-15 10:16  HLS.L30.T32UMU.2026288T101608.v2.0  33 % cloud, 18 files, B04 yes
+  2026-10-12 10:37  HLS.S30.T32ULU.2026285T102911.v2.0  5 % cloud, 20 files, B04 yes
+  collection OSTIA-UKMO-L4-GLOB-REP-v2.0_2.0  GHRSST Level 4 OSTIA Global Historical Reprocessed Foundation Sea Surface Temperature Analysis produced by the UK Meteorological Office
+  collection EO:EUM:DAT:SENTINEL-3:SL_2_WST___NRT_2017-07-05  SLSTR Sea Surface Temperatures (SST) in NRT - Sentinel-3
+The "earthdata" source does not download a file without a token (option token: an Earthdata Login token).
+```
+
+(as answered on 2026-10-27, without a token: two calls; `open()` refused before any call)
+
+```yaml
+# config/packages/omnilab.yaml
+omnilab:
+    sources:
+        earthdata: { factory: earthdata, options: { mailto: '%env(OMNILAB_MAILTO)%', collections: [HLSS30_2.0, HLSL30_2.0], token: '%env(default::EARTHDATA_TOKEN)%' } }
+```
+
+## Errors
+
+Every call goes through `HttpSource`: a 404 or a 410 (and a 204) is null - an empty page for a list -; a 429 is a `RateLimitedException` (`retryAfter` from `Retry-After`); a 5xx, a time-out or a host that does not answer an `UnavailableException`; any other 4xx a `ProviderException` with its `status` and what the service said; an answer that is not JSON a `ProviderException`, a web page answered for JSON an `UnavailableException`.
+
+The CMR's errors (`{"errors": [...]}`, a 400 for a bad box or a period backwards) are read into the
+`ProviderException`'s message. Before any call (`NotSupportedException`): a query that names no
+collection when the option names none; through STAC, a concept id or a box across the
+antimeridian; `open()` without a token or of an address that is not `https://`. `open()` maps only
+an unreachable host (`UnavailableException`): the response is returned as it is, its status the
+caller's to check.
+
 ## Verified, and not
 
 Against the real CMR on 2026-10-15, without an account: the HLS granules (S30 and L30 v2.0) over
@@ -114,6 +227,20 @@ starts; a protected file without a token (302 to the login page) and an open bro
 the CMR's STAC for the HLS S30 question (six granules in 2.7 s without a cloud filter; with the
 `stac` option, two under 30 %, one a page, the second page by the cursor, as the search API's).
 
+Again on 2026-10-27, without a token: the HLS granules over Strasbourg from 10-10 to 10-26 under
+40 % cloud (two), the collections found by "sea surface temperature", `open()` refused without a
+token (the example above).
+
 **Not verified live (needs a token)**: `open()` with an Earthdata Login token, and the CMR's
 answers to an authenticated search (no account was used); the test feeds a token and checks it
 is sent.
+
+## Responsibility
+
+This package is an independent, unofficial client: it is not affiliated with, endorsed by or
+sponsored by NASA. NASA's Earth science data are open, without restriction on use (NASA's Earth
+Science Data and Information Policy); cite each collection by its DOI, as the README's
+[Terms of use](https://github.com/glitchr-omnisense/omnilab-earthdata#terms-of-use) says. Whoever
+runs the package holds the Earthdata Login account it uses and is responsible for any use made of
+what it returns: see the README's
+[Responsibility](https://github.com/glitchr-omnisense/omnilab-earthdata#responsibility) section.
