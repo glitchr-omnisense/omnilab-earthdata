@@ -4,6 +4,7 @@ namespace Omnilab\Earthdata;
 
 use Omnilab\Exception\NotSupportedException;
 use Omnilab\Exception\UnavailableException;
+use Omnilab\Http\Redaction;
 use Omnilab\Model\Asset;
 use Omnilab\Model\BBox;
 use Omnilab\Model\Point;
@@ -174,7 +175,10 @@ final class EarthdataSource extends HttpSource
         try {
             return $this->http->request('GET', $href, ['headers' => ['Authorization' => 'Bearer '.$this->token] + array_diff_key($this->headers, ['Authorization' => true])]);
         } catch (TransportExceptionInterface $e) {
-            throw new UnavailableException('earthdata', 'unreachable: '.$e->getMessage(), null, $e);
+            // The token masked in the message and the previous, a copy; no trace keeps the headers.
+            $secrets = Redaction::secrets($href, ['headers' => ['Authorization' => 'Bearer '.$this->token]]);
+
+            throw Redaction::withoutArguments(new UnavailableException('earthdata', 'unreachable: '.Redaction::text($e->getMessage(), $secrets), null, Redaction::copy($e, $secrets)));
         }
     }
 

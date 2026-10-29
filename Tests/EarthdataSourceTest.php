@@ -250,4 +250,29 @@ final class EarthdataSourceTest extends TestCase
         $this->expectException(RateLimitedException::class);
         $this->source([], new MockResponse('', ['http_code' => 429]))->datasets(new Query('HLS'));
     }
+
+    /**
+     * A file not reached: nothing of the token anywhere in what a log of the whole chain writes - the
+     * messages, the previous exception (a copy of the HTTP client's, its class kept), the traces'
+     * arguments (the request's headers) when zend.exception_ignore_args is off.
+     */
+    public function testAnUnreachableFileHoldsNoToken(): void
+    {
+        $ignoreArgs = ini_set('zend.exception_ignore_args', '0');
+        $http = new \Symfony\Component\HttpClient\MockHttpClient(static function (string $method, string $url): never {
+            throw new \Symfony\Component\HttpClient\Exception\TransportException(\sprintf('Could not resolve host: data.example for "%s".', $url));
+        });
+        try {
+            (new \Omnilab\Earthdata\EarthdataSourceFactory($http))->create(['token' => 'earthdata-token-1234567'])->open('https://data.example/file.nc');
+            self::fail('no exception');
+        } catch (\Omnilab\Exception\UnavailableException $e) {
+            self::assertInstanceOf(\Symfony\Component\HttpClient\Exception\TransportException::class, $e->getPrevious());
+            for ($one = $e; null !== $one; $one = $one->getPrevious()) {
+                self::assertFalse(str_contains($one->getMessage(), 'earthdata-token-1234567'), $one->getMessage());
+                self::assertFalse(str_contains(print_r($one->getTrace(), true), 'earthdata-token-1234567'), 'a trace holds the token');
+            }
+        } finally {
+            ini_set('zend.exception_ignore_args', false !== $ignoreArgs ? $ignoreArgs : '1');
+        }
+    }
 }
