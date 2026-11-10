@@ -1,0 +1,40 @@
+{
+    "$schema": "https://github.com/glitchr-omnisense/contracts/blob/1.x/resources/usage-policy.schema.json",
+    "provider": "earthdata",
+    "rateLimits": null,
+    "concurrency": null,
+    "rights": {
+        "commercial": "allowed",
+        "openSourceRequired": null,
+        "caching": {
+            "permission": "allowed",
+            "maxTtl": null
+        },
+        "storage": "allowed",
+        "redistribution": "allowed",
+        "attribution": {
+            "required": false,
+            "text": "NASA Earthdata (cite each collection by its DOI)",
+            "url": "https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance",
+            "where": [
+                "source"
+            ]
+        },
+        "licence": "CC0-1.0"
+    },
+    "requirements": {
+        "key": false,
+        "userAgent": {
+            "required": false,
+            "pattern": null
+        }
+    },
+    "provenance": {
+        "terms": "https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance",
+        "policy": "https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html",
+        "verifiedAt": "2026-11-10",
+        "declaredBy": "maintainer",
+        "contact": null,
+        "notes": "CMR Search API docs (2026-11-10): rate throttling rules exist but no figure is published; over them, 429 with a retry-after header, which clients should honour. Request timeout 180 s. Client-Id header optional (helps operations). No User-Agent rule. Data use guidance: data from NASA-led missions are CC0 unless a collection carries a restriction or licence; non-NASA data follow the sponsoring organisation's licence; citation strongly urged (request, not requirement), NASA acknowledged as source; no implied endorsement. CMR search needs no account; file downloads from the DAACs need an Earthdata Login token. No rate-limit headers seen on a test call."
+    }
+}

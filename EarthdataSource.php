@@ -172,6 +172,7 @@ final class EarthdataSource extends HttpSource
         if (!str_starts_with($href, 'https://')) {
             throw NotSupportedException::operation('earthdata', 'open an address other than https:// ('.$href.': in AWS, us-west-2, with S3 credentials)');
         }
+        $this->governed('GET', $href);
         try {
             return $this->http->request('GET', $href, ['headers' => ['Authorization' => 'Bearer '.$this->token] + array_diff_key($this->headers, ['Authorization' => true])]);
         } catch (TransportExceptionInterface $e) {

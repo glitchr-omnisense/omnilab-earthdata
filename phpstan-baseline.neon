@@ -1,0 +1,505 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Argument of an invalid type mixed supplied for foreach, only iterables are supported\.$#'
+			identifier: foreach.nonIterable
+			count: 7
+			path: EarthdataSource.php
+
+		-
+			message: '#^Binary operation "\." between mixed and ''_'' results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Binary operation "\." between non\-falsy\-string and mixed results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 4
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''ArchiveAndDistributionInformation'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''BeginningDateTime'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Boundary'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''BoundingRectangles'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''DOI'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''DayNightFlag'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Description'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''EastBoundingCoordinate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''EndingDateTime'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''EndsAtPresentFlag'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Geometry'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''HorizontalSpatialDomain'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Id'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Instruments'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''MimeType'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Name'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''NorthBoundingCoordinate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Points'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''ProductionDateTime'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''RangeDateTimes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''ShortName'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Size'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''SizeInBytes'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''SizeUnit'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''SouthBoundingCoordinate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Type'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''URL'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Values'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''Version'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset ''WestBoundingCoordinate'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot access offset 0 on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 4
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 12
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 6
+			path: EarthdataSource.php
+
+		-
+			message: '#^Method Omnilab\\Earthdata\\EarthdataSource\:\:footprint\(\) has parameter \$geometry with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Method Omnilab\\Earthdata\\EarthdataSource\:\:period\(\) has parameter \$extent with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$answer of static method Omnilab\\Source\\Stac\:\:page\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$array of function array_filter expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 3
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, ''strval'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: Omnilab\\Model\\Product given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\)\: array\{float, float\} given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, Closure\(array\{meta\?\: array\<string, mixed\>, umm\: array\<string, mixed\>\}\)\: Omnilab\\Model\\Product given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$extent of static method Omnilab\\Earthdata\\EarthdataSource\:\:period\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$geometry of static method Omnilab\\Earthdata\\EarthdataSource\:\:footprint\(\) expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$item of method Omnilab\\Earthdata\\EarthdataSource\:\:toGranule\(\) expects array\{meta\?\: array\<string, mixed\>, umm\: array\<string, mixed\>\}, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$related of static method Omnilab\\Earthdata\\EarthdataSource\:\:assets\(\) expects list\<array\<string, mixed\>\>, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#1 \$time of static method Omnilab\\Source\\HttpSource\:\:time\(\) expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 5
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#2 \$array of function array_map expects array, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#3 \$type of class Omnilab\\Model\\Asset constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Parameter \#5 \$title of class Omnilab\\Model\\Asset constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: EarthdataSource.php
+
+		-
+			message: '#^Cannot cast mixed to float\.$#'
+			identifier: cast.double
+			count: 1
+			path: EarthdataSourceFactory.php
+
+		-
+			message: '#^Cannot cast mixed to string\.$#'
+			identifier: cast.string
+			count: 2
+			path: EarthdataSourceFactory.php
+
+		-
+			message: '#^Parameter \#1 \$callback of function array_map expects \(callable\(mixed\)\: mixed\)\|null, ''strval'' given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSourceFactory.php
+
+		-
+			message: '#^Parameter \#3 \$token of class Omnilab\\Earthdata\\EarthdataSource constructor expects string\|null, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: EarthdataSourceFactory.php
+
+		-
+			message: '#^Cannot access offset ''HORIZONTALTILENUMBER'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access offset ''MGRS_TILE_ID'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access offset ''VERTICALTILENUMBER'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access offset ''authorization'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access offset ''cmr\-search\-after'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$alternates on Omnilab\\Model\\Asset\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$assets on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$collection on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$datetime on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$end on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$href on Omnilab\\Model\\Asset\|null\.$#'
+			identifier: property.nonObject
+			count: 4
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$id on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$properties on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 3
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$roles on Omnilab\\Model\\Asset\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$source on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot access property \$start on Omnilab\\Model\\Product\|null\.$#'
+			identifier: property.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot call method asset\(\) on Omnilab\\Model\\Product\|null\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot call method cloudCover\(\) on Omnilab\\Model\\Product\|null\.$#'
+			identifier: method.nonObject
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot call method contains\(\) on Omnilab\\Model\\BBox\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot call method format\(\) on DateTimeImmutable\|null\.$#'
+			identifier: method.nonObject
+			count: 4
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Cannot call method toArray\(\) on Omnilab\\Model\\BBox\|null\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Method Omnilab\\Earthdata\\Tests\\EarthdataSourceTest\:\:source\(\) has parameter \$options with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Offset ''type'' might not exist on array\<string, mixed\>\|null\.$#'
+			identifier: offsetAccess.notFound
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Parameter \#1 \$file of method Omnilab\\Earthdata\\EarthdataSource\:\:open\(\) expects Omnilab\\Model\\Asset\|string, Omnilab\\Model\\Asset\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Parameter \#1 \$options of method Omnilab\\Source\\SourceFactory\:\:create\(\) expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Parameter \#1 \$string of function str_pad expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 2
+			path: Tests/EarthdataSourceTest.php
+
+		-
+			message: '#^Property Omnilab\\Earthdata\\Tests\\EarthdataSourceTest\:\:\$calls \(list\<array\{string, list\<string\>, list\<string\>\}\>\) does not accept non\-empty\-list\<array\{string, mixed, mixed\}\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: Tests/EarthdataSourceTest.php

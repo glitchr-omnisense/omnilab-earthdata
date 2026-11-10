@@ -60,6 +60,17 @@ User-Agent with the `mailto` address).
 See [docs/](docs/index.md) for the calls, the mapping, the CMR's STAC (option `stac: LPCLOUD`: the same granules through the core's STAC reader, one archive at a time, slower), and
 what was verified.
 
+## Usage policy
+
+Declared as data in [`policy.json`](policy.json) (read at https://cmr.earthdata.nasa.gov/search/site/docs/search/api.html on 2026-11-10), and honoured on every request by the
+core: a limit reached waits when its window ends within `max_wait` seconds, else the request is not
+sent ([Usage policies](https://github.com/glitchr-omnisense/omnilab/blob/1.x/docs/policies.md)).
+
+- Limits: not published (unknown).
+- Licence: CC0-1.0; commercial use: allowed.
+- Credit: not required: NASA Earthdata (cite each collection by its DOI) (https://www.earthdata.nasa.gov/engage/open-data-services-software-policies/data-use-guidance).
+- Needs: nothing.
+
 ## Responsibility
 
 This package is an independent, unofficial client: it is not affiliated with, endorsed by or
