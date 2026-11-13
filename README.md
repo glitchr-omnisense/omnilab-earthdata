@@ -40,6 +40,44 @@ omnilab:
                 token: '%env(EARTHDATA_TOKEN)%'         # optional: to download the files
 ```
 
+## Install and a first call
+
+```sh
+composer require omnilab/earthdata
+```
+
+A real call, with no account and no key: the HLS granules over Strasbourg in the first half of
+October 2026, from NASA's CMR (searching needs no account; downloading needs an Earthdata Login
+token). `mailto` is your address, sent in the User-Agent so that the service can reach you before it
+blocks a caller; the source keeps to the limits its [`policy.json`](policy.json) declares.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnilab\Earthdata\EarthdataSourceFactory;
+use Omnilab\Model\Point;
+use Omnilab\Source\ProductQuery;
+
+$earthdata = (new EarthdataSourceFactory())->create(['mailto' => 'you@example.org']);   // your address, in the User-Agent
+$granules = $earthdata->products(new ProductQuery(['HLSS30_2.0', 'HLSL30_2.0'], new Point(48.5734, 7.7521),
+    new DateTimeImmutable('2026-10-01'), new DateTimeImmutable('2026-10-14T23:59:59Z'), maxCloudCover: 30, limit: 5));
+foreach ($granules as $granule) {
+    echo $granule->id, ' ', $granule->cloudCover(), ' % cloud', "\n";
+}
+```
+
+Its output on 2026-11-13:
+
+```
+HLS.S30.T32ULU.2026285T102911.v2.0 5 % cloud
+HLS.L30.T32UMU.2026279T102219.v2.0 1 % cloud
+HLS.L30.T32ULU.2026279T102219.v2.0 1 % cloud
+HLS.S30.T32ULU.2026278T102859.v2.0 12 % cloud
+HLS.S30.T32UMU.2026278T102859.v2.0 23 % cloud
+```
+
 ## The token
 
 The CMR's search is open. The files sit at NASA's archives (the DAACs: LP DAAC, PO.DAAC, NSIDC,
